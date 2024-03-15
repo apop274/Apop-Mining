@@ -142,7 +142,7 @@ def main():
 
         
 
-#you have to correct this part below. look in the previous gpt conversations.
+
 
 if __name__ == "__main__":
     main()
