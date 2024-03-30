@@ -4,19 +4,42 @@ import pygetwindow as gw
 import pyautogui
 import random
 import time
+import funcList
 
 #Alex Popov Neoxa cs2 gamebot 3.13.24
 
 
 # Function to check if the screen matches a reference image
 def check_screen(reference_image, monitor):
-    screenshot = pyautogui.screenshot(region=monitor)
-    screenshot_np = np.array(screenshot)
-    screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2GRAY)
-    reference_gray = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
-    result = cv2.matchTemplate(screenshot_gray, reference_gray, cv2.TM_CCOEFF_NORMED)
-    _, max_val, _, _ = cv2.minMaxLoc(result)
-    return max_val > 0.9  # Adjust threshold as needed
+ 
+    try:
+        screenshot = pyautogui.screenshot(region=monitor)
+
+        screenshot_np = np.array(screenshot)
+        
+        screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2GRAY)
+
+        reference_gray = cv2.cvtColor(np.array(reference_image), cv2.COLOR_BGR2GRAY)
+
+        result = cv2.matchTemplate(screenshot_gray, reference_gray, cv2.TM_CCOEFF_NORMED)
+
+        _, max_val, _, _ = cv2.minMaxLoc(result)
+
+        return max_val > 0.9
+    
+    except Exception as e:
+
+        print(f"Error occurred: {e}")
+
+        return False
+    
+    # screenshot = pyautogui.screenshot(region=monitor)
+   # screenshot_np = np.array(screenshot)
+   # screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2GRAY)
+   # reference_gray = cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)
+   # result = cv2.matchTemplate(screenshot_gray, reference_gray, cv2.TM_CCOEFF_NORMED) #error herer
+   # _, max_val, _, _ = cv2.minMaxLoc(result)
+   # return max_val > 0.9  # Adjust threshold as needed
 
 
 def move():
@@ -61,6 +84,10 @@ def move():
 
 
 
+
+
+    
+    
 
 
 # Function to move randomly using WASD keys
@@ -112,42 +139,37 @@ def main():
     cs2_window = cs2_window[0]
     monitor = (cs2_window.left, cs2_window.top, cs2_window.width, cs2_window.height)
 
-    team_pick_image=cv2.imread('CS2-Team-pick.png') #cs2 team pick screen
+    team_pick_image=cv2.imread('team-pick.png') #cs2 team pick screen
    # terrorist_image = cv2.imread('terrorist_screen.png')  # Load reference image for terrorist screen
    # counterterrorist_image = cv2.imread('counterterrorist_screen.png')  # Load reference image for counterterrorist screen
     
     while True:
-        if check_screen(team_pick_image, monitor):
-            pyautogui.move(100, 0, duration=0.25)  # Move mouse to the left
-            move()
-        elif check_screen(team_pick_image, monitor):
+        if check_screen(team_pick_image, monitor): #error here
             pyautogui.move(-100, 0, duration=0.25)  # Move mouse to the right
-            move()
+            funcList.move2()
+        elif check_screen(team_pick_image, monitor):
+            pyautogui.move(100, 0, duration=0.25)  # Move mouse to the left
+            funcList.move2()
         else:
-            move()
+            funcList.move2()
             move_randomly()
 
         if random.random() < 0.1:  # 10% chance to shoot
             shoot()
-            move()
+            funcList.move2()
 
         if random.random() < 0.15:  # 5% chance to swap weapons
             swap_weapon()
-            move()
+            funcList.move2()
 
 
         time.sleep(1)  # Adjust delay between actions as needed
 
         print("running...")
 
-        
-
-
 
 if __name__ == "__main__":
     main()
-
-
 
 
 
