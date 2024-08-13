@@ -61,7 +61,73 @@ void loop() {
 }
 
 
+/*       start time at 10 pm setup
 
+#include <EEPROM.h>
+#include <Servo.h>
+
+Servo myservo;
+const unsigned long oneDayMillis = 86400000;  // 24 hours in milliseconds
+const unsigned long tenPmMillis = 79200000;   // 10 PM in milliseconds from midnight (22 hours * 3600000 ms)
+const unsigned long onTimeMillis = 28800000;  // 8 AM in milliseconds from midnight (8 hours * 3600000 ms)
+const unsigned long offTimeMillis = 64800000; // 6 PM in milliseconds from midnight (18 hours * 3600000 ms)
+
+unsigned long previousMillis = 0;
+unsigned long currentMillis = 0;
+unsigned long startMillis = tenPmMillis;
+
+void setup() {
+  myservo.attach(9);  // Attach the servo to pin 9
+  Serial.begin(9600);
+
+  // Initialize the servo to the resting position
+  myservo.write(0);
+  delay(1000);  // Give it a second to move to the initial position
+
+  // Read saved startMillis from EEPROM
+  EEPROM.get(0, startMillis);
+
+  // If the saved startMillis is invalid (first run), initialize it to 10 PM
+  if (startMillis == 0 || startMillis >= oneDayMillis) {
+    startMillis = millis();
+    EEPROM.put(0, startMillis);
+  }
+}
+
+void loop() {
+  currentMillis = millis();
+  unsigned long elapsedMillis = (currentMillis + startMillis) % oneDayMillis;
+
+  // Servo action at 8 AM
+  if (elapsedMillis >= onTimeMillis && elapsedMillis < onTimeMillis + 2000) {
+    myservo.write(45);
+    Serial.println("Servo ON (8 AM)");
+    delay(2000);  // Hold position for 2 seconds to ensure the button is fully pressed
+
+    myservo.write(0);
+    Serial.println("Servo OFF");
+  }
+  // Servo action at 6 PM
+  else if (elapsedMillis >= offTimeMillis && elapsedMillis < offTimeMillis + 2000) {
+    myservo.write(45);
+    Serial.println("Servo ON (6 PM)");
+    delay(2000);  // Hold position for 2 seconds to ensure the button is fully pressed
+
+    myservo.write(0);
+    Serial.println("Servo OFF");
+  }
+
+  // Save startMillis to EEPROM every hour
+  if ((elapsedMillis % 3600000) < 1000) {
+    EEPROM.put(0, startMillis);
+  }
+
+  delay(1000);  // Check every second
+}
+
+
+
+*/
 
 
 /*
